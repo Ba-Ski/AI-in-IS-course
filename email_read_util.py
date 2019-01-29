@@ -7,7 +7,7 @@ stopwords = set(nltk.corpus.stopwords.words('english'))
 stemmer = nltk.PorterStemmer()
 
 
-# Combine the different parts of the email into a flat list of strings
+# Собирает разные части письма в простой список строк
 def flatten_to_string(parts):
     ret = []
     if type(parts) == str:
@@ -20,20 +20,20 @@ def flatten_to_string(parts):
     return ret
 
 
-# Extract subject and body text from a single email file
+# Извлекает тему и тело письма из одного email файла
 def extract_email_text(path):
-    # Load a single email from an input file
+    # Загрузка файла по из указанного пути
     with open(path, errors='ignore') as f:
         msg = email.message_from_file(f)
     if not msg:
         return ""
 
-    # Read the email subject
+    # Получение темы письма
     subject = msg['Subject']
     if not subject:
         subject = ""
 
-    # Read the email body
+    # Получение тела пиьсма
     body = ' '.join(m for m in flatten_to_string(msg.get_payload()) if type(m) == str)
     if not body:
         body = ""
@@ -41,19 +41,19 @@ def extract_email_text(path):
     return subject + ' ' + body
 
 
-# Process a single email file into stemmed tokens
+# Преобразует email файл в массив из основ слов (https://ru.wikipedia.org/wiki/Стемминг)
 def load(path):
     email_text = extract_email_text(path)
     if not email_text:
         return []
 
-    # Tokenize the message
+    # Преобразование текста в массив слов
     tokens = nltk.word_tokenize(email_text)
 
-    # Remove punctuation from tokens
+    # Удаление знаков препинания из массива токенов
     tokens = [i.strip("".join(punctuations)) for i in tokens if i not in punctuations]
 
-    # Remove stopwords and stem tokens
+    # Удаление стоп-слов и стемминг токенов (https://en.wikipedia.org/wiki/Stop_words)
     if len(tokens) > 2:
         return [stemmer.stem(w) for w in tokens if w not in stopwords]
     return []
