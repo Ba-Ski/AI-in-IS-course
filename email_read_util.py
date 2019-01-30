@@ -45,15 +45,12 @@ def extract_email_text(path):
 def load(path):
     email_text = extract_email_text(path)
     if not email_text:
-        return []
+        return ""
 
     # Преобразование текста в массив слов
     tokens = nltk.word_tokenize(email_text)
 
-    # Удаление знаков препинания из массива токенов
-    tokens = [i.strip("".join(punctuations)) for i in tokens if i not in punctuations]
-
     # Удаление стоп-слов и стемминг токенов (https://en.wikipedia.org/wiki/Stop_words)
     if len(tokens) > 2:
-        return [stemmer.stem(w) for w in tokens if w not in stopwords]
-    return []
+        return ' '.join(stemmer.stem(w) for w in tokens if w not in stopwords)
+    return ""
