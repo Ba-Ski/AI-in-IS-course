@@ -15,8 +15,11 @@ def flatten_to_string(parts):
     elif type(parts) == list:
         for part in parts:
             ret += flatten_to_string(part)
-    elif parts.get_content_type == 'text/plain':
-        ret += parts.get_payload()
+    elif parts.get_content_type() == 'text/plain':
+        ret.append(parts.get_payload())
+    elif parts.get_content_type() == 'multipart/alternative':
+        ret += flatten_to_string(parts.get_payload())
+
     return ret
 
 
